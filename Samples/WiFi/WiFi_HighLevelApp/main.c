@@ -111,11 +111,14 @@ typedef enum {
 static const unsigned int MAX_NUMBER_STORED_NETWORKS = 10;
 
 // Network configuration: Configure the variables with the appropriate settings for your network
-static const uint8_t sampleNetworkSsid[] = "WIFI_NETWORK_SSID";
-static const WifiConfig_Security_Type sampleNetworkSecurityType = WifiConfig_Security_Unknown;
+// static const uint8_t sampleNetworkSsid[] = "WIFI_NETWORK_SSID";
+static const uint8_t sampleNetworkSsid[] = "SK_WiFiGIGA4E04_5G";
+// static const WifiConfig_Security_Type sampleNetworkSecurityType = WifiConfig_Security_Unknown;
+static const WifiConfig_Security_Type sampleNetworkSecurityType = WifiConfig_Security_Wpa2_Psk;
 
 // Network configuration: Settings specific to an WPA2_PSK network
-static const char *sampleNetworkPsk = "WIFI_NETWORK_PASSWORD";
+// static const char *sampleNetworkPsk = "WIFI_NETWORK_PASSWORD";
+static const char *sampleNetworkPsk = "KMR24@7966";
 
 // Network configuration: Settings specific to an EAP-TLS network
 static const char *rootCACertStoreIdentifier = "SmplRootCACertId";
