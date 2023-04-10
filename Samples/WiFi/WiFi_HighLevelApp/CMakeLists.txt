@@ -8,8 +8,12 @@ project(Wifi_HighLevelApp C)
 azsphere_configure_tools(TOOLS_REVISION "22.11")
 azsphere_configure_api(TARGET_API_SET "15")
 
-add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c)
+# add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c)
+add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c udplog.c)
 target_link_libraries(${PROJECT_NAME} applibs gcc_s c)
+
+# comment out the add_compile_definitions to use the standard Log_Debug
+add_compile_definitions(USE_SOCKET_LOG)
 
 # TARGET_HARDWARE and TARGET_DEFINITION relate to the hardware definition targeted by this sample.
 # When using this sample with other hardware, replace TARGET_HARDWARE with the name of that hardware.

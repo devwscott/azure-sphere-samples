@@ -9,7 +9,9 @@
       "$SAMPLE_BUTTON_1",
       "$SAMPLE_BUTTON_2"
     ],
-    "WifiConfig": true
+    "WifiConfig": true,
+    "AllowedUdpServerPorts": [ 1824 ],
+    "AllowedConnections": [ "255.255.255.255" ]
   },
   "ApplicationType": "Default",
   "MallocVersion": 2

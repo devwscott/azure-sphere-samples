@@ -31,6 +31,8 @@
 #include <applibs/networking.h>
 #include <applibs/log.h>
 
+#include "udplog.h"
+
 // The following #include imports a "sample appliance" hardware definition. This provides a set of
 // named constants such as SAMPLE_BUTTON_1 which are used when opening the peripherals, rather
 // that using the underlying pin names. This enables the same code to target different hardware.
@@ -147,6 +149,7 @@ static int showNetworkStatusButtonGpioFd = -1;
 
 static EventLoop *eventLoop = NULL;
 static EventLoopTimer *buttonPollTimer = NULL;
+static EventLoopTimer *udpLogTimer = NULL;
 
 // Button state variables
 static GPIO_Value_Type changeNetworkConfigButtonState = GPIO_Value_High;
@@ -172,6 +175,7 @@ static ExitCode OutputEapTlsInformation(void);
 static void ShowDeviceNetworkStatus(void);
 static bool IsButtonPressed(int fd, GPIO_Value_Type *oldState);
 static void ButtonEventTimeHandler(EventLoopTimer *timer);
+static void UdpLogEventTimeHandler(EventLoopTimer *timer);
 static ExitCode InitPeripheralsAndHandlers(void);
 static void CloseFdAndPrintError(int fd, const char *fdName);
 static void ClosePeripheralsAndHandlers(void);
@@ -1031,6 +1035,37 @@ static void ButtonEventTimeHandler(EventLoopTimer *timer)
     }
 }
 
+
+/// <summary>
+/// Button timer event:  Check the status of the buttons.
+/// </summary>
+/// <param name="timer">Timer which has fired.</param>
+static void UdpLogEventTimeHandler(EventLoopTimer *timer)
+{
+    bool isNetworkReady = false;
+    static int counter = 0;
+
+    if (ConsumeEventLoopTimerEvent(timer) != 0) {
+        exitCode = ExitCode_ButtonTimerHandler_Consume;
+        return;
+    }
+
+    if (Networking_IsNetworkingReady(&isNetworkReady) == -1) {
+        Log_Debug("ERROR: Networking_IsNetworkingReady: %d (%s)\n", errno, strerror(errno));
+        exitCode = ExitCode_IsNetworkingReady_Failed;
+        return;
+    }
+
+    if (isNetworkReady) {
+        // Log_Debug("INFO: Network is ready.\n");
+        Udp_Debug("Info: Some information - counter %d\n", counter++); 
+    } else {
+        Log_Debug("INFO: Network is not ready.\n");
+    }
+
+
+
+}
 /// <summary>
 ///     Set up SIGTERM termination handler, initialize peripherals, and set up event handlers.
 /// </summary>
@@ -1076,6 +1111,15 @@ static ExitCode InitPeripheralsAndHandlers(void)
     if (buttonPollTimer == NULL) {
         return ExitCode_Init_ButtonTimer;
     }
+
+#if 1//UdpLog TEST
+    static const struct timespec UdpLogPeriod2s = {.tv_sec = 2, .tv_nsec = 0};
+    udpLogTimer = CreateEventLoopPeriodicTimer(eventLoop, &UdpLogEventTimeHandler,
+                                                   &UdpLogPeriod2s);
+    if (udpLogTimer == NULL) {
+        return ExitCode_Init_ButtonTimer;
+    }
+#endif
 
     return ExitCode_Success;
 }
