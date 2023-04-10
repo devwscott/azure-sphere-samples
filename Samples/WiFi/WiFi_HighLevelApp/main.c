@@ -114,13 +114,15 @@ static const unsigned int MAX_NUMBER_STORED_NETWORKS = 10;
 
 // Network configuration: Configure the variables with the appropriate settings for your network
 // static const uint8_t sampleNetworkSsid[] = "WIFI_NETWORK_SSID";
-static const uint8_t sampleNetworkSsid[] = "SK_WiFiGIGA4E04_5G";
+// static const uint8_t sampleNetworkSsid[] = "SK_WiFiGIGA4E04_5G";
+static const uint8_t sampleNetworkSsid[] = "ESP32_IvanAP";
 // static const WifiConfig_Security_Type sampleNetworkSecurityType = WifiConfig_Security_Unknown;
 static const WifiConfig_Security_Type sampleNetworkSecurityType = WifiConfig_Security_Wpa2_Psk;
 
 // Network configuration: Settings specific to an WPA2_PSK network
 // static const char *sampleNetworkPsk = "WIFI_NETWORK_PASSWORD";
-static const char *sampleNetworkPsk = "KMR24@7966";
+// static const char *sampleNetworkPsk = "KMR24@7966";
+static const char *sampleNetworkPsk = "12345678";
 
 // Network configuration: Settings specific to an EAP-TLS network
 static const char *rootCACertStoreIdentifier = "SmplRootCACertId";
@@ -1058,9 +1060,11 @@ static void UdpLogEventTimeHandler(EventLoopTimer *timer)
 
     if (isNetworkReady) {
         // Log_Debug("INFO: Network is ready.\n");
+        Log_Debug("Info: Some information - counter %d\n", counter++); 
         Udp_Debug("Info: Some information - counter %d\n", counter++); 
     } else {
-        Log_Debug("INFO: Network is not ready.\n");
+        Log_Debug("INFO: Network is not ready.%d\n", counter++);
+        Udp_Debug("INFO: Network is not ready.%d\n", counter++);
     }
 
 
