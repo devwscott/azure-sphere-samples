@@ -11,7 +11,7 @@
     ],
     "WifiConfig": true,
     "AllowedUdpServerPorts": [ 1824 ],
-    "AllowedConnections": [ "255.255.255.255" ]
+    "AllowedConnections": [ "192.168.45.197" ]
   },
   "ApplicationType": "Default",
   "MallocVersion": 2
