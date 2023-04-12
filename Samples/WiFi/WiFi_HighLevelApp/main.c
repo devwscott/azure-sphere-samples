@@ -31,6 +31,10 @@
 #include <applibs/networking.h>
 #include <applibs/log.h>
 
+//for MQTT Test
+#include "mqtt_utilities.h"
+#include "common.h"
+
 #include "udplog.h"
 
 // The following #include imports a "sample appliance" hardware definition. This provides a set of
@@ -109,20 +113,28 @@ typedef enum {
 
 } ExitCode;
 
+
+//For MQTT Test
+//MQTT Variable
+#define MQTT_PUBLISH_PERIOD 500000000
+static char* mqttConf_topic = "hello";
+static char* mqttConf_brokerIp = "192.168.45.197";
+
+
 // The MT3620 currently handles a maximum of 10 stored wifi networks.
 static const unsigned int MAX_NUMBER_STORED_NETWORKS = 10;
 
 // Network configuration: Configure the variables with the appropriate settings for your network
 // static const uint8_t sampleNetworkSsid[] = "WIFI_NETWORK_SSID";
-// static const uint8_t sampleNetworkSsid[] = "SK_WiFiGIGA4E04_5G";
-static const uint8_t sampleNetworkSsid[] = "ESP32_IvanAP";
+static const uint8_t sampleNetworkSsid[] = "SK_WiFiGIGA4E04_5G";
+// static const uint8_t sampleNetworkSsid[] = "ESP32_IvanAP";
 // static const WifiConfig_Security_Type sampleNetworkSecurityType = WifiConfig_Security_Unknown;
 static const WifiConfig_Security_Type sampleNetworkSecurityType = WifiConfig_Security_Wpa2_Psk;
 
 // Network configuration: Settings specific to an WPA2_PSK network
 // static const char *sampleNetworkPsk = "WIFI_NETWORK_PASSWORD";
-// static const char *sampleNetworkPsk = "KMR24@7966";
-static const char *sampleNetworkPsk = "12345678";
+static const char *sampleNetworkPsk = "KMR24@7966";
+// static const char *sampleNetworkPsk = "12345678";
 
 // Network configuration: Settings specific to an EAP-TLS network
 static const char *rootCACertStoreIdentifier = "SmplRootCACertId";
@@ -196,6 +208,12 @@ static void WifiNetworkEnableState(void);
 static void WifiNetworkDisableState(void);
 static void WifiNetworkDuplicateState(void);
 static void WifiNetworkDeleteState(void);
+
+
+//For MQTT Test
+int test_mqtt();
+int test_mqtt_init();
+
 
 // Pointer to the next state
 typedef void (*NextStateFunctionPtr)(void);
@@ -521,6 +539,8 @@ static void WifiNetworkConfigureAndAddState(void)
     // set the next state
     nextStateFunction = WifiNetworkEnableState;
     StateStatusOutputHelper("configuring and adding the", "enabled", true);
+
+
 }
 
 /// <summary>
@@ -543,6 +563,7 @@ static void WifiNetworkEnableState(void)
     // set the next state
     nextStateFunction = WifiNetworkDisableState;
     StateStatusOutputHelper("enabling the", "disabled", true);
+
 }
 
 /// <summary>
@@ -1067,6 +1088,8 @@ static void UdpLogEventTimeHandler(EventLoopTimer *timer)
         Udp_Debug("INFO: Network is not ready.%d\n", counter++);
     }
 
+    // publish mqtt message(topic:hello)
+    test_mqtt();
 
 
 }
@@ -1156,6 +1179,37 @@ static void ClosePeripheralsAndHandlers(void)
     CloseFdAndPrintError(showNetworkStatusButtonGpioFd, "Button2Gpio");
 }
 
+//mqtt test code
+int test_mqtt_init()
+{
+    Log_Debug("im in\n");
+    int res = MQTTInit(mqttConf_brokerIp, "1883", mqttConf_topic);
+    Log_Debug(res);
+    Log_Debug("done init\n");
+    //mqttpublish(mqttconf_topic, "{\"enginetemp\":\"67.0\",\"enginerpm\":\"32.0\",\"fuel\":\"51.0\"}");
+    // mqttpublish(mqttconf_topic, "wiring it my way");
+    //  while (1)
+    //  {
+    // }
+    //log_debug("done publish\n");
+}
+
+int test_mqtt()
+{
+    Log_Debug("publish\n");
+    // int res = mqttinit(mqttconf_brokerip, "1883", mqttconf_topic);
+    // log_debug(res);
+    // log_debug("done init\n");
+    //mqttpublish(mqttconf_topic, "{\"enginetemp\":\"67.0\",\"enginerpm\":\"32.0\",\"fuel\":\"51.0\"}");
+    MQTTPublish(mqttConf_topic, "wiring it my way");
+    //  while (1)
+    //  {
+    // }
+    //log_debug("done publish\n");
+}
+
+
+
 /// <summary>
 ///     Main entry point for this application.
 /// </summary>
@@ -1171,6 +1225,9 @@ int main(int argc, char *argv[])
         "available Wi-Fi networks.\n");
 
     exitCode = InitPeripheralsAndHandlers();
+
+    //For MQTT test
+    test_mqtt_init();
 
     // Use event loop to wait for events and trigger handlers, until an error or SIGTERM happens.
     while (exitCode == ExitCode_Success) {

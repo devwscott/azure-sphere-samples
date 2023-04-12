@@ -9,8 +9,19 @@ azsphere_configure_tools(TOOLS_REVISION "22.11")
 azsphere_configure_api(TARGET_API_SET "15")
 
 # add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c)
-add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c udplog.c)
-target_link_libraries(${PROJECT_NAME} applibs gcc_s c)
+add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c udplog.c
+                ./thirdparty/MQTT-C/src/mqtt.c
+                ./thirdparty/MQTT-C/src/mqtt_pal.c
+                "mqtt_utilities.c"
+                "common.c"
+                )
+
+TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
+                ./thirdparty/MQTT-C/include
+                ./)
+
+#target_link_libraries(${PROJECT_NAME} applibs gcc_s c)
+target_link_libraries(${PROJECT_NAME} applibs pthread gcc_s c)
 
 # comment out the add_compile_definitions to use the standard Log_Debug
 add_compile_definitions(USE_SOCKET_LOG)
