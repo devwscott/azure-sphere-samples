@@ -118,7 +118,7 @@ typedef enum {
 //MQTT Variable
 #define MQTT_PUBLISH_PERIOD 500000000
 static char* mqttConf_topic = "hello";
-static char* mqttConf_brokerIp = "192.168.45.197";
+static char* mqttConf_brokerIp = "192.168.45.197"; //PC IP Address
 
 
 // The MT3620 currently handles a maximum of 10 stored wifi networks.
@@ -1073,6 +1073,7 @@ static void UdpLogEventTimeHandler(EventLoopTimer *timer)
         return;
     }
 
+#if 0//tempory_disabled
         time_t rawtime;
         struct tm* timeinfo;
         time(&rawtime);
@@ -1103,6 +1104,7 @@ static void UdpLogEventTimeHandler(EventLoopTimer *timer)
         {
             Log_Debug("TimeSync IS disabled~~~!\n");
         }
+#endif
 
     if (Networking_IsNetworkingReady(&isNetworkReady) == -1) {
         Log_Debug("ERROR: Networking_IsNetworkingReady: %d (%s)\n", errno, strerror(errno));
@@ -1120,7 +1122,7 @@ static void UdpLogEventTimeHandler(EventLoopTimer *timer)
     }
 
     // publish mqtt message(topic:hello)
-    // test_mqtt();
+    test_mqtt();
 
 
 }
@@ -1354,11 +1356,14 @@ int main(int argc, char *argv[])
 
     exitCode = InitPeripheralsAndHandlers();
 
+#if 0//tempory_disabled
     CheckNetworkStatus();
+#endif
 
     //For MQTT test
-    // test_mqtt_init();
+    test_mqtt_init();
 
+#if 0//tempory_disabled
         if (Networking_TimeSync_SetEnabled(true) == -1) {
             Log_Debug("setenable() call FAILED\n");
         }
@@ -1387,7 +1392,7 @@ int main(int argc, char *argv[])
         //     Log_Debug("ERROR: clock_settime failed with error code: %s (%d).\n", strerror(errno),
         //               errno);
         // }
-
+#endif
 
     // Use event loop to wait for events and trigger handlers, until an error or SIGTERM happens.
     while (exitCode == ExitCode_Success) {
