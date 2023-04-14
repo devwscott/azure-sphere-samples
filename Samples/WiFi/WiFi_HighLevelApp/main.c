@@ -1073,6 +1073,37 @@ static void UdpLogEventTimeHandler(EventLoopTimer *timer)
         return;
     }
 
+        time_t rawtime;
+        struct tm* timeinfo;
+        time(&rawtime);
+        timeinfo = localtime(&rawtime);
+        Log_Debug("Current local system time and date: %s", asctime(timeinfo));
+
+        // if (Networking_TimeSync_SetEnabled(false) == -1) {
+        //     Log_Debug("setenable() call FAILED\n");
+        // }
+        // else {
+        //     Log_Debug("setenable() call SUCCEEDED\n");
+        // };
+
+
+        bool isTimeSyncEnabled = false;
+        Log_Debug("Calling Networking_TimeSync_GetEnabled()...");
+        if (Networking_TimeSync_GetEnabled(&isTimeSyncEnabled) == -1) {
+            Log_Debug("call FAILED\n");
+        }
+        else {
+            Log_Debug("call SUCCEEDED\n");
+        };
+
+        if (isTimeSyncEnabled) {
+            Log_Debug("TimeSync IS enabled!\n");
+        }
+        else
+        {
+            Log_Debug("TimeSync IS disabled~~~!\n");
+        }
+
     if (Networking_IsNetworkingReady(&isNetworkReady) == -1) {
         Log_Debug("ERROR: Networking_IsNetworkingReady: %d (%s)\n", errno, strerror(errno));
         exitCode = ExitCode_IsNetworkingReady_Failed;
@@ -1089,7 +1120,7 @@ static void UdpLogEventTimeHandler(EventLoopTimer *timer)
     }
 
     // publish mqtt message(topic:hello)
-    test_mqtt();
+    // test_mqtt();
 
 
 }
@@ -1208,7 +1239,104 @@ int test_mqtt()
     //log_debug("done publish\n");
 }
 
+void CheckNetworkStatus(void)
+{
+    // // Ensure the necessary network interface is enabled.
+    // int result = Networking_SetInterfaceState(NetworkInterface, true);
+    // if (result != 0) {
+    //     if (errno == EAGAIN) {
+    //         Log_Debug("INFO: The networking stack isn't ready yet, will try again later.\n");
+    //         return ExitCode_Success;
+    //     } else {
+    //         Log_Debug(
+    //             "ERROR: Networking_SetInterfaceState for interface '%s' failed: errno=%d (%s)\n",
+    //             NetworkInterface, errno, strerror(errno));
+    //         return ExitCode_CheckStatus_SetInterfaceState;
+    //     }
+    // }
+    // isNetworkStackReady = true;
 
+    // Display total number of network interfaces.
+    ssize_t count = Networking_GetInterfaceCount();
+    if (count == -1) {
+        Log_Debug("ERROR: Networking_GetInterfaceCount: errno=%d (%s)\n", errno, strerror(errno));
+        return ;
+    }
+    Log_Debug("INFO: Networking_GetInterfaceCount: count=%zd\n", count);
+
+    // Read current status of all interfaces.
+    size_t bytesRequired = ((size_t)count) * sizeof(Networking_NetworkInterface);
+    Networking_NetworkInterface *interfaces = malloc(bytesRequired);
+    if (!interfaces) {
+        abort();
+    }
+
+    ssize_t actualCount = Networking_GetInterfaces(interfaces, (size_t)count);
+    if (actualCount == -1) {
+        Log_Debug("ERROR: Networking_GetInterfaces: errno=%d (%s)\n", errno, strerror(errno));
+    }
+    Log_Debug("INFO: Networking_GetInterfaces: actualCount=%zd\n", actualCount);
+
+    // Print detailed description of each interface.
+    for (ssize_t i = 0; i < actualCount; ++i) {
+        Log_Debug("INFO: interface #%zd\n", i);
+
+        // Print the interface's name.
+        Log_Debug("INFO:   interfaceName=\"%s\"\n", interfaces[i].interfaceName);
+
+        // Print whether the interface is enabled.
+        Log_Debug("INFO:   isEnabled=\"%d\"\n", interfaces[i].isEnabled);
+
+        // Print the interface's configuration type.
+        Networking_IpType ipType = interfaces[i].ipConfigurationType;
+        const char *typeText;
+        switch (ipType) {
+        case Networking_IpType_DhcpNone:
+            typeText = "DhcpNone";
+            break;
+        case Networking_IpType_DhcpClient:
+            typeText = "DhcpClient";
+            break;
+        default:
+            typeText = "unknown-configuration-type";
+            break;
+        }
+        Log_Debug("INFO:   ipConfigurationType=%d (%s)\n", ipType, typeText);
+
+        // Print the interface's medium.
+        Networking_InterfaceMedium_Type mediumType = interfaces[i].interfaceMediumType;
+        const char *mediumText;
+        switch (mediumType) {
+        case Networking_InterfaceMedium_Unspecified:
+            mediumText = "unspecified";
+            break;
+        case Networking_InterfaceMedium_Wifi:
+            mediumText = "Wi-Fi";
+            break;
+        case Networking_InterfaceMedium_Ethernet:
+            mediumText = "Ethernet";
+            break;
+        default:
+            mediumText = "unknown-medium";
+            break;
+        }
+        Log_Debug("INFO:   interfaceMediumType=%d (%s)\n", mediumType, mediumText);
+
+        // Print the interface connection status
+        Networking_InterfaceConnectionStatus status;
+        int result = Networking_GetInterfaceConnectionStatus(interfaces[i].interfaceName, &status);
+        if (result != 0) {
+            Log_Debug("ERROR: Networking_GetInterfaceConnectionStatus: errno=%d (%s)\n", errno,
+                      strerror(errno));
+            return ;
+        }
+        Log_Debug("INFO:   interfaceStatus=0x%02x\n", status);
+    }
+
+    free(interfaces);
+
+    return ;
+}
 
 /// <summary>
 ///     Main entry point for this application.
@@ -1226,8 +1354,40 @@ int main(int argc, char *argv[])
 
     exitCode = InitPeripheralsAndHandlers();
 
+    CheckNetworkStatus();
+
     //For MQTT test
-    test_mqtt_init();
+    // test_mqtt_init();
+
+        if (Networking_TimeSync_SetEnabled(true) == -1) {
+            Log_Debug("setenable() call FAILED\n");
+        }
+        else {
+            Log_Debug("setenable() call SUCCEEDED\n");
+        };
+
+
+        if (Networking_TimeSync_SetEnabled(false) == -1) {
+            Log_Debug("setenable() call FAILED\n");
+        }
+        else {
+            Log_Debug("setenable() call SUCCEEDED\n");
+        };
+
+        // struct timespec currentTime;
+        // if (clock_gettime(CLOCK_REALTIME, &currentTime) == -1) {
+        //     Log_Debug("ERROR: clock_gettime failed with error code: %s (%d).\n", strerror(errno),
+        //               errno);
+        // }
+
+        // // Add three hours to the current time
+        // // currentTime.tv_sec += 10800;
+        // currentTime.tv_sec += 94608000;
+        // if (clock_settime(CLOCK_REALTIME, &currentTime) == -1) {
+        //     Log_Debug("ERROR: clock_settime failed with error code: %s (%d).\n", strerror(errno),
+        //               errno);
+        // }
+
 
     // Use event loop to wait for events and trigger handlers, until an error or SIGTERM happens.
     while (exitCode == ExitCode_Success) {
