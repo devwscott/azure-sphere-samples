@@ -117,8 +117,12 @@ typedef enum {
 //For MQTT Test
 //MQTT Variable
 #define MQTT_PUBLISH_PERIOD 500000000
-static char* mqttConf_topic = "hello";
+static char* mqttConf_topic = "hello";          // mqtt send topic
+static char* mqttConf_recvtopic = "hello_mt";   // mqtt receive topic
 static char* mqttConf_brokerIp = "192.168.45.197"; //PC IP Address
+
+
+// static char* mqttConf_brokerIp = "192.168.100.163"; //Soma Launge(SSID : ziot) -- PC IP Address. Also need to chagned the AllowedConnections on a
 
 
 // The MT3620 currently handles a maximum of 10 stored wifi networks.
@@ -1212,13 +1216,23 @@ static void ClosePeripheralsAndHandlers(void)
     CloseFdAndPrintError(showNetworkStatusButtonGpioFd, "Button2Gpio");
 }
 
+
+void test_Publish_Message(const char* topic, const char* msg) {
+    Log_Debug("Received publish('%s'): %s\n", topic, msg);
+}
+
 //mqtt test code
 int test_mqtt_init()
 {
     Log_Debug("im in\n");
-    int res = MQTTInit(mqttConf_brokerIp, "1883", mqttConf_topic);
+    // int res = MQTTInit(mqttConf_brokerIp, "1883", mqttConf_topic); //NonTLS, with PASSWORD
+    int res = MQTTInit(mqttConf_brokerIp, "8883", mqttConf_recvtopic); //with TLS, PASSWORD
     Log_Debug(res);
     Log_Debug("done init\n");
+
+    //Register subscribe topic Callbak
+    MQTTRegisterSubscribeCallback(test_Publish_Message);
+
     //mqttpublish(mqttconf_topic, "{\"enginetemp\":\"67.0\",\"enginerpm\":\"32.0\",\"fuel\":\"51.0\"}");
     // mqttpublish(mqttconf_topic, "wiring it my way");
     //  while (1)

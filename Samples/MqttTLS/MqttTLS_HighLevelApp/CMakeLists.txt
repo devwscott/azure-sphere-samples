@@ -13,18 +13,33 @@ add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c udplog.c
                 ./thirdparty/MQTT-C/src/mqtt.c
                 ./thirdparty/MQTT-C/src/mqtt_pal.c
                 "mqtt_utilities.c"
+                "mbedtls_socket.c"
                 "common.c"
                 )
 
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
                 ./thirdparty/MQTT-C/include
+                ./thirdparty/mbedtls/include
                 ./)
 
-#target_link_libraries(${PROJECT_NAME} applibs gcc_s c)
-target_link_libraries(${PROJECT_NAME} applibs pthread gcc_s c)
+include_directories(./
+                thirdparty/mbedtls/include)
+
+                #target_link_libraries(${PROJECT_NAME} applibs gcc_s c)
+# target_link_libraries(${PROJECT_NAME} applibs pthread gcc_s c)
+target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c mbedtls mbedcrypto mbedx509)
 
 # comment out the add_compile_definitions to use the standard Log_Debug
 add_compile_definitions(USE_SOCKET_LOG)
+
+add_compile_definitions(MQTT_USE_MBEDTLS)
+
+add_compile_definitions(MBEDTLS_CONFIG_FILE="mbedtls_user_config.h")
+
+# disabled the unnecessary configs for mbedtls 
+set(ENABLE_PROGRAMS OFF CACHE BOOL "Disabled for ENABLE_PROGRAMS" FORCE)
+set(ENABLE_TESTING OFF CACHE BOOL "Disabled for ENABLE_TESTING" FORCE)
+add_subdirectory (thirdparty/mbedtls)
 
 # TARGET_HARDWARE and TARGET_DEFINITION relate to the hardware definition targeted by this sample.
 # When using this sample with other hardware, replace TARGET_HARDWARE with the name of that hardware.
@@ -46,4 +61,6 @@ find_path(
 
 azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "${TARGET_DIRECTORY}" TARGET_DEFINITION "${TARGET_DEFINITION}")
 
-azsphere_target_add_image_package(${PROJECT_NAME})
+# azsphere_target_add_image_package(${PROJECT_NAME})
+# azsphere_target_add_image_package(${PROJECT_NAME} RESOURCE_FILES "ca_wslee.crt")
+azsphere_target_add_image_package(${PROJECT_NAME} RESOURCE_FILES "ca_wslee.der")

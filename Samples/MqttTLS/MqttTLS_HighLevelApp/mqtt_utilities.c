@@ -13,6 +13,7 @@
 #include <poll.h>
 #include <stdlib.h>
 #include "common.h"
+#include "mbedtls_socket.h"
 
 static void emptyCallback(const char* topic, const char* msg) {};
 
@@ -66,10 +67,26 @@ static void client_refresher(void* client);
 */
 int open_nb_socket(const char* addr, const char* port);
 
+struct mbedtls_context ctx;
+
 /* declarations */
 int MQTTInit(const char* addr, const char* port, const char* subTopic) {
 
+	// struct mbedtls_context ctx;
 	pthread_mutex_lock(&sockMutex);
+
+#if 1
+	// mbedtls_open_nb_socket(&ctx, addr, port, "ca_wslee.crt");
+	mbedtls_open_nb_socket(&ctx, addr, port, "ca_wslee.der");
+    socketFd = &ctx.ssl_ctx;
+
+    if (socketFd == NULL) {
+		pthread_mutex_unlock(&sockMutex);
+ 		MQTTStop();
+		return -1;
+	}
+
+#else
 	socketFd = open_nb_socket(addr, port);
 
 	if (socketFd == -1) {
@@ -78,13 +95,15 @@ int MQTTInit(const char* addr, const char* port, const char* subTopic) {
 		MQTTStop();
 		return -1;
 	}
-	
+#endif	
 	mqtt_init(&client, socketFd, sendbuf, sizeof(sendbuf), recvbuf, sizeof(recvbuf), publish_callback);
 
 	pthread_mutex_unlock(&sockMutex);
 
 	// mqtt_connect(&client, NULL, NULL, NULL, 0, NULL, NULL, MQTT_CONNECT_CLEAN_SESSION, 400);
-	mqtt_connect(&client, NULL, NULL, NULL, 0, "esp32", "1234", MQTT_CONNECT_CLEAN_SESSION, 400);
+	// mqtt_connect(&client, NULL, NULL, NULL, 0, "esp32", "1234", MQTT_CONNECT_CLEAN_SESSION, 400);
+	// mqtt_connect(&client, "MT3620", NULL, NULL, 0, NULL, NULL, 0, 400);
+	mqtt_connect(&client, "MT3620", NULL, NULL, 0, NULL, NULL, MQTT_CONNECT_CLEAN_SESSION, 400);
 
 	if (client.error != MQTT_OK) {
 		Log_Debug("Failed to connect to MQTT broker\n");
@@ -101,7 +120,7 @@ int MQTTInit(const char* addr, const char* port, const char* subTopic) {
 		isThreadUp = true;
 	}
 
-//	mqtt_subscribe(&client, subTopic, MQTT_PUBLISH_QOS_1);
+	mqtt_subscribe(&client, subTopic, MQTT_PUBLISH_QOS_1);
 
 	Log_Debug("MQTT client initialized.\n");
 
@@ -188,7 +207,7 @@ static void client_refresher(void* cl)
 			int err = mqtt_sync((struct mqtt_client*) cl);
 		}
 		waitMs(100);
-		// Log_Debug("mqTSK\n");
+		//  Log_Debug("mqTSK\n");
 		pthread_mutex_lock(&killMutex);
 		if (killThreadRequest) {
 			killThreadRequest = false;
