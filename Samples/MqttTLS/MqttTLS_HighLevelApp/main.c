@@ -18,6 +18,7 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -34,6 +35,7 @@
 //for MQTT Test
 #include "mqtt_utilities.h"
 #include "common.h"
+#include "parson.h"
 
 #include "udplog.h"
 
@@ -1219,6 +1221,44 @@ static void ClosePeripheralsAndHandlers(void)
 
 void test_Publish_Message(const char* topic, const char* msg) {
     Log_Debug("Received publish('%s'): %s\n", topic, msg);
+
+    JSON_Value *root_value;   
+    root_value = json_parse_string(msg);  
+    if (json_value_get_type(root_value) != JSONObject)   
+    {   
+        if (root_value != NULL)   
+        {   
+            json_value_free(root_value);   
+        }   
+        Log_Debug("parse %s failed", msg);   
+        return;   
+    }
+
+    JSON_Object *root_object = json_value_get_object(root_value); 
+#if 0
+    {
+        "devType": "Light",
+        "control": "on",
+        "desired": {
+            "id": 123222,
+            "state": "off"
+        }
+    }
+#endif
+    Log_Debug("devType is %s\n", json_object_get_string(root_object, "devType"));
+    Log_Debug("control is %s\n", json_object_get_string(root_object, "control"));
+
+    JSON_Object *desired_object = json_object_get_object(root_object, "desired");   
+    if (desired_object != NULL)   
+    {
+        Log_Debug("desired : id is %d\n", (int)json_object_get_number(desired_object, "id"));
+        Log_Debug("desired : state is %s\n", json_object_get_string(desired_object, "state"));
+    }   
+    else
+    {
+        Log_Debug(">>> desired get_object : FAIL\n");   
+    }
+    json_value_free(root_value);   
 }
 
 //mqtt test code
@@ -1241,14 +1281,69 @@ int test_mqtt_init()
     //log_debug("done publish\n");
 }
 
+#define MESSAGE_MAX_LEN     256
+unsigned char Payload_Buffer[MESSAGE_MAX_LEN];
+
+void serialization_example(unsigned char *pData) {
+    static int i=0;
+
+    JSON_Value *root_value = json_value_init_object();
+    JSON_Object *root_object = json_value_get_object(root_value);
+    char *serialized_string = NULL;
+
+#if 1
+#if 0
+{
+    "devType": "Light",
+    "devID": 52,
+    "state": "on"
+}
+#endif
+
+    json_object_set_string(root_object, "devType", "Light");
+    json_object_set_number(root_object, "devID", i);
+    json_object_set_string(root_object, "state", (i++%2==0)?"on":"off");
+#else
+
+// {
+//     "name": "John Smith",
+//     "age": 25,
+//     "address": {
+//         "city": "Cupertino"
+//     },
+//     "contact": {
+//         "emails": [
+//             "email@example.com",
+//             "email2@example.com"
+//         ]
+//     }
+// }
+
+    json_object_set_string(root_object, "name", "John Smith");
+    json_object_set_number(root_object, "age", 25);
+    json_object_dotset_string(root_object, "address.city", "Cupertino");
+    json_object_dotset_value(root_object, "contact.emails", json_parse_string("[\"email@example.com\",\"email2@example.com\"]"));
+#endif
+
+    serialized_string = json_serialize_to_string_pretty(root_value);
+    // Log_Debug("JSON_Packet is \n");
+    // Log_Debug("%s", serialized_string);
+    snprintf(pData, MESSAGE_MAX_LEN, "%s", serialized_string);
+    json_free_serialized_string(serialized_string);
+    json_value_free(root_value);
+}
+
 int test_mqtt()
 {
     Log_Debug("publish\n");
+
+    serialization_example(&Payload_Buffer[0]);
     // int res = mqttinit(mqttconf_brokerip, "1883", mqttconf_topic);
     // log_debug(res);
     // log_debug("done init\n");
     //mqttpublish(mqttconf_topic, "{\"enginetemp\":\"67.0\",\"enginerpm\":\"32.0\",\"fuel\":\"51.0\"}");
-    MQTTPublish(mqttConf_topic, "wiring it my way");
+    // MQTTPublish(mqttConf_topic, "wiring it my way");
+    MQTTPublish(mqttConf_topic, Payload_Buffer);
     //  while (1)
     //  {
     // }
