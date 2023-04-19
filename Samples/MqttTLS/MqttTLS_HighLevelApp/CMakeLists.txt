@@ -15,6 +15,7 @@ add_executable(${PROJECT_NAME} main.c eventloop_timer_utilities.c udplog.c
                 "mqtt_utilities.c"
                 "mbedtls_socket.c"
                 "common.c"
+                "parson.c"
                 )
 
 TARGET_INCLUDE_DIRECTORIES(${PROJECT_NAME} PUBLIC
