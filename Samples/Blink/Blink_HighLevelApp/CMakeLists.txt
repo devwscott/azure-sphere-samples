@@ -3,13 +3,14 @@
 
 cmake_minimum_required (VERSION 3.20)
 
-project (Blink C)
+project (Blink)
 
 azsphere_configure_tools(TOOLS_REVISION "22.11")
 azsphere_configure_api(TARGET_API_SET "15")
 
 # Create executable
-add_executable (${PROJECT_NAME} main.c)
+# add_executable (${PROJECT_NAME} main.c)
+add_executable (${PROJECT_NAME} main.cpp Blink.cpp)
 target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c)
 # azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/mt3620_rdb" TARGET_DEFINITION "template_appliance.json")
 azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/avnet_mt3620_sk" TARGET_DEFINITION "template_appliance.json")
