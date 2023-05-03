@@ -5,7 +5,7 @@
 #include "Blink.h"
 #include <applibs/log.h>
 
-Blink::Blink(int pin) : m_pin(pin), m_interval(500), m_running(false)
+Blink::Blink(int pin, string c) : m_pin(pin), m_interval(500), m_running(false), color(c)
 {
     m_ledFd = GPIO_OpenAsOutput(m_pin, GPIO_OutputMode_PushPull, GPIO_Value_High);
 }
@@ -54,3 +54,7 @@ void Blink::blink()
     }
 }
 
+string Blink::getColor()
+{
+    return color;
+}
