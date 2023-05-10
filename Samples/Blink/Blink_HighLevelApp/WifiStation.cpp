@@ -39,6 +39,8 @@ bool WifiStation::connect(){
     
     Log_Debug("WifiStation::connect()\n");
 
+    m_running = true;
+
     return ret;
 }
 
@@ -82,7 +84,8 @@ void* WifiStation::__statusThread__(void *arg){
 
     Log_Debug("WifiStation::__statusThread()\n");
 
-    while(1){
+    // while(1){
+    while(pWifiStation->m_running){
         Log_Debug("[WifiStation::__statusThread()] running!(%d)\n", cnt++);
 
         if(cnt%2){
