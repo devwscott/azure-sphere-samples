@@ -14,6 +14,8 @@ public:
     Coordinator();
     virtual ~Coordinator();
 
+    bool initialize();
+
     virtual void onNetworkConnected() override;
     virtual void onNetworkDisconnected() override;
 };

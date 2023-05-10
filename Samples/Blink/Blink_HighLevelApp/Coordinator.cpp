@@ -29,6 +29,16 @@ Coordinator::~Coordinator(){
 }
 
 
+bool Coordinator::initialize(){
+    bool ret = true;
+
+    Log_Debug("Coordinator::initialize\n");
+
+    m_wifistation->init("TestAP");
+    
+    return ret;
+}
+
 
 void Coordinator::onNetworkConnected(){
     Log_Debug("Coordinator::onNetworkConnected\n");
