@@ -1,4 +1,5 @@
 
+#include <unistd.h>
 #include <applibs/log.h>
 
 #include "WifiStation.h"
@@ -76,8 +77,15 @@ string WifiStation::TEST_getAPName(){
 void* WifiStation::__statusThread__(void *arg){
     WifiStation *pWifiStation = static_cast<WifiStation*>(arg);
 
+    static int cnt;
+    int runInterval = 500*1000;     //500ms sleep()
+
     Log_Debug("WifiStation::__statusThread()\n");
-    
+
+    while(1){
+        Log_Debug("[WifiStation::__statusThread()] running!(%d)\n", cnt++);
+        usleep(runInterval);
+    }
 
     return nullptr;
 }

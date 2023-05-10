@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 
     coordinator->initialize();
 
-    delete coordinator;
+    // delete coordinator;
 
     Log_Debug("Blink CPP Example start!!\n");
     Log_Debug("Color is %s\n", blink->getColor().c_str());
