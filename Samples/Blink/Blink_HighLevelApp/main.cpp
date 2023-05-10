@@ -20,7 +20,9 @@ int main(int argc, char *argv[])
     blink->start(4000);
 
     Coordinator *coordinator = new Coordinator();
-    
+
+    coordinator->initialize();
+
     delete coordinator;
 
     Log_Debug("Blink CPP Example start!!\n");
