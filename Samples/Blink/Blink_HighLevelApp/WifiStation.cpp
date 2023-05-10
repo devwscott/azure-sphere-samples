@@ -84,6 +84,15 @@ void* WifiStation::__statusThread__(void *arg){
 
     while(1){
         Log_Debug("[WifiStation::__statusThread()] running!(%d)\n", cnt++);
+
+        if(cnt%2){
+            pWifiStation->m_listener->onNetworkConnected();
+        }
+        else{
+            pWifiStation->m_listener->onNetworkDisconnected();
+
+        }
+
         usleep(runInterval);
     }
 
