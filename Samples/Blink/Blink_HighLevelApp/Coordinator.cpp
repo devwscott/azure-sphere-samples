@@ -42,6 +42,17 @@ bool Coordinator::initialize(){
 }
 
 
+bool Coordinator::run(){
+    bool ret = true;
+
+    Log_Debug("Coordinator::run\n");
+
+    m_wifistation->connect();
+
+    return ret;
+}
+
+
 void Coordinator::onNetworkConnected(){
     Log_Debug("Coordinator::onNetworkConnected\n");
 
