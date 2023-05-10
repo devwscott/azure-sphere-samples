@@ -36,6 +36,8 @@ bool Coordinator::initialize(){
 
     m_wifistation->init("TestAP");
     
+    Log_Debug("AP NAME after is %s\n", m_wifistation->TEST_getAPName().c_str());
+    
     return ret;
 }
 
