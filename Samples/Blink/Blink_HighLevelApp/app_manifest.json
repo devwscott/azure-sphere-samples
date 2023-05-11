@@ -6,6 +6,8 @@
   "CmdArgs": [],
   "Capabilities": {
     "Gpio": [ "$TEMPLATE_LED" ],
+    "WifiConfig": true,
+    "NetworkConfig": true,
     "AllowedApplicationConnections": []
   },
   "ApplicationType": "Default"
