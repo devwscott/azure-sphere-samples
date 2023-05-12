@@ -26,7 +26,7 @@ public:
     virtual ~MqttClient();
 
     bool init(int qosLevel, int keepAliveTime);
-    bool connect(string &broker, string &port, string &certFile);
+    bool connect(const string &broker, const string &port, const string &certFile);
     bool subscribe(string &topic);
     bool unSubscribe(string &topic);
     bool publish(string &topic, string &msg);
