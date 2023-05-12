@@ -15,6 +15,7 @@ azsphere_configure_api(TARGET_API_SET "15")
 add_executable (${PROJECT_NAME} main.cpp Blink.cpp
 Coordinator.cpp
 WifiStation.cpp
+MqttClient.cpp
 uClibcpp/algorithm.cpp
 uClibcpp/associative_base.cpp
 uClibcpp/bitset.cpp

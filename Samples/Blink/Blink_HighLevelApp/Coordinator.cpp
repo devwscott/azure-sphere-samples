@@ -20,6 +20,13 @@ Coordinator::Coordinator(){
     {
         Log_Debug("new WifiSTation() error\n");
     }
+
+    m_mqttclient = new MqttClient(this);
+    if(m_mqttclient == NULL)
+    {
+        Log_Debug("new MqttClient() error\n");
+    }
+
 }
 
 
@@ -28,6 +35,7 @@ Coordinator::~Coordinator(){
     Log_Debug("Coordinator::~Coordinator()\n");
 
     delete m_wifistation;
+    delete m_mqttclient;
 }
 
 
@@ -42,7 +50,9 @@ bool Coordinator::initialize(){
     }
 
     Log_Debug("AP NAME after is %s\n", m_wifistation->TEST_getAPName().c_str());
-    
+
+    m_mqttclient->init(0, 1000);
+
     return ret;
 }
 
@@ -105,3 +115,10 @@ void Coordinator::onNetworkDisconnected(){
     return;
 }
 
+
+
+void Coordinator::onReceiveTopic(string &topic, string &msg){
+    Log_Debug("Coordinator::onReceiveTopic\n");
+
+    return;
+}
