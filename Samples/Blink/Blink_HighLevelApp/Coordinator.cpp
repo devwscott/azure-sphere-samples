@@ -67,6 +67,10 @@ bool Coordinator::run(){
         m_wifistation->storeAPInfo("SK_WiFiGIGA4E04_5G", WifiStation::Security_Wpa2Psk, "KMR24@7966");
     }
 
+    if(m_mqttclient->connect("TestBorkerIP", "1883", "TestCA_CertFile") != true){
+        Log_Debug("     error : m_mqttclient->connect()\n");
+    }
+
     return ret;
 }
 
