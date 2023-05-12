@@ -124,5 +124,7 @@ void Coordinator::onNetworkDisconnected(){
 void Coordinator::onReceiveTopic(string &topic, string &msg){
     Log_Debug("Coordinator::onReceiveTopic\n");
 
+    Log_Debug("     topic:%s\n", topic.c_str());
+    Log_Debug("     msg:%s\n", msg.c_str());
     return;
 }

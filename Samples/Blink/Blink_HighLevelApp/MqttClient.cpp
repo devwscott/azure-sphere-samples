@@ -9,6 +9,8 @@
 MqttClient::MqttClient(IMqttClientListener *callback):m_running(false) {
     Log_Debug("MqttClient::MqttClient()\n");
 
+    m_listener = callback;
+
 }
 
 
@@ -78,6 +80,11 @@ void* MqttClient::__syncThread__(void *arg){
     while(1){
 
         Log_Debug("[MqttClient::__syncThread__] running\n");
+
+        string topic = "CB_topic";
+        string msg = "CB_msg";
+        pMqttClient->m_listener->onReceiveTopic(topic, msg);
+        // pMqttClient->m_listener->onReceiveTopic(string("CB_TPOIC_DATA"), string("CB_MSG_DATA"));
        
         if(pMqttClient->m_running){
 
