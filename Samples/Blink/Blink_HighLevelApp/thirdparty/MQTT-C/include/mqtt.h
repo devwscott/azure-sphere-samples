@@ -25,6 +25,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
 #include <mqtt_pal.h>
 
 /**
@@ -1564,5 +1568,9 @@ enum MQTTErrors __mqtt_ping(struct mqtt_client *client);
  * @returns \c MQTT_OK upon success, an \ref MQTTErrors otherwise.
  */
 enum MQTTErrors mqtt_disconnect(struct mqtt_client *client);
+
+#if defined(__cplusplus)
+}
+#endif
 
 #endif
