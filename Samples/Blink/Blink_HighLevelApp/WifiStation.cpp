@@ -34,6 +34,8 @@ WifiStation::~WifiStation(){
 
 bool WifiStation::init(string apName){
     bool ret = true;
+    pthread_attr_t attr;
+    size_t stackSize=0;
 
     Log_Debug("WifiStation::init()\n");
     m_apName = apName;
@@ -52,10 +54,17 @@ bool WifiStation::init(string apName){
             Log_Debug("[WifiStation::init] Invalid networkId\n");
         }
 
-        if(pthread_create(&m_thread, NULL, WifiStation::__statusThread__, this) != 0){
+        pthread_attr_init(&attr);
+
+        // if(pthread_create(&m_thread, NULL, WifiStation::__statusThread__, this) != 0){
+        if(pthread_create(&m_thread, &attr, WifiStation::__statusThread__, this) != 0){
             Log_Debug("[WifiStation::init] error : pthread_create()\n");
             ret = false;
         }
+
+        // Get the stack size
+        pthread_attr_getstacksize(&attr, &stackSize);
+        Log_Debug("[WifiStation::init] pthread stackSize(0x%x)()\n", stackSize);
 
         m_running = true;
 
