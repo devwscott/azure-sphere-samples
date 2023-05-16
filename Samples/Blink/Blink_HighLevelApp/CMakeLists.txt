@@ -60,12 +60,17 @@ uClibcpp/typeinfo.cpp
 uClibcpp/utility.cpp
 uClibcpp/valarray.cpp
 uClibcpp/vector.cpp
+./thirdparty/MQTT-C/src/mqtt.c
+./thirdparty/MQTT-C/src/mqtt_pal.c
                 )
 
 
 # # Include Folders
 # include_directories(${PROJECT_NAME} PUBLIC
 #                     ./uClibcpp/include)
+
+include_directories(${PROJECT_NAME} PUBLIC
+                    ./thirdparty/MQTT-C/include)
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-rtti")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
