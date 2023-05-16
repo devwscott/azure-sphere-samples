@@ -51,7 +51,12 @@ bool Coordinator::initialize(){
 
     Log_Debug("AP NAME after is %s\n", m_wifistation->TEST_getAPName().c_str());
 
-    m_mqttclient->init(0, 1000);
+    // QOS(0), keepAlive(400ms)
+    if(m_mqttclient->init(0, 400) != true){
+        Log_Debug("[Coordinator::initialize] error : m_mqttclient->init()\n");
+        return false;
+    }
+    
 
     return ret;
 }
@@ -67,9 +72,6 @@ bool Coordinator::run(){
         m_wifistation->storeAPInfo("SK_WiFiGIGA4E04_5G", WifiStation::Security_Wpa2Psk, "KMR24@7966");
     }
 
-    if(m_mqttclient->connect("TestBorkerIP", "1883", "TestCA_CertFile") != true){
-        Log_Debug("     error : m_mqttclient->connect()\n");
-    }
 
     return ret;
 }
@@ -89,9 +91,25 @@ void Coordinator::onNetworkConnected(){
     Log_Debug("MAC : %s\n", macAddress.c_str());
 
     // for testing, disConnect()
-    usleep(2000*1000);
-    m_wifistation->disConnect();
+    // usleep(2000*1000);
+    // m_wifistation->disConnect();
 
+    // m_mqttclient->connect(string("192.168.45.197"), string("1883"), NULL);
+
+    /* MQTT Connect without CA Cert */
+    if(m_mqttclient->connect(string("192.168.45.197"), string("1883")) != true){
+        Log_Debug("[Coordinator::onNetworkConnected] error : m_mqttclient->connect()\n");
+    }
+
+    /* For Testing, publish MQTT */
+    usleep(1000*1000);
+    string test_topic = "hello";
+    string test_msg = "mqttclient_msg";
+    
+    if(m_mqttclient->publish(test_topic, test_msg) != true){
+        Log_Debug("[Coordinator::onNetworkConnected] error : m_mqttclient->publish()\n");
+    }
+ 
     return;
 }
 
@@ -115,7 +133,6 @@ void Coordinator::onNetworkDisconnected(){
     usleep(2000*1000);
     m_wifistation->connect();
 
-
     return;
 }
 
@@ -126,5 +143,8 @@ void Coordinator::onReceiveTopic(string &topic, string &msg){
 
     Log_Debug("     topic:%s\n", topic.c_str());
     Log_Debug("     msg:%s\n", msg.c_str());
+
     return;
 }
+
+
