@@ -70,13 +70,32 @@ uClibcpp/vector.cpp
 #                     ./uClibcpp/include)
 
 include_directories(${PROJECT_NAME} PUBLIC
-                    ./thirdparty/MQTT-C/include)
+                    ./thirdparty/MQTT-C/include
+                    ./thirdparty/mbedtls/include
+                    ./
+                    )
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-rtti")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
 
-target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c)
+# cflags for MQTT-C
+add_compile_definitions(MQTT_USE_MBEDTLS)
+
+# cflags for mbedtls
+add_compile_definitions(MBEDTLS_CONFIG_FILE="mbedtls_user_config.h")
+
+# disabled the unnecessary configs for mbedtls 
+set(ENABLE_PROGRAMS OFF CACHE BOOL "Disabled for ENABLE_PROGRAMS" FORCE)
+set(ENABLE_TESTING OFF CACHE BOOL "Disabled for ENABLE_TESTING" FORCE)
+
+add_subdirectory (thirdparty/mbedtls)
+
+
+# target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c)
+target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c mbedtls mbedcrypto mbedx509)
+
 # azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/mt3620_rdb" TARGET_DEFINITION "template_appliance.json")
 azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/avnet_mt3620_sk" TARGET_DEFINITION "template_appliance.json")
 
-azsphere_target_add_image_package(${PROJECT_NAME})
+# azsphere_target_add_image_package(${PROJECT_NAME})
+azsphere_target_add_image_package(${PROJECT_NAME} RESOURCE_FILES "ca_cert.der")
