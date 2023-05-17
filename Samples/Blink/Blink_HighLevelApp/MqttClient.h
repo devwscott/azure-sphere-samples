@@ -28,6 +28,10 @@ private:
     unsigned char m_sendbuf[512];
     unsigned char m_recvbuf[512];
     int _open_nb_socket(const string &addr, const string &port);
+
+    void *m_mbedtls_ctx;
+    int _open_nb_socket(const string &addr, const string &port, const string &cert);
+
     static void __subscribe_callback__(void **arg, struct mqtt_response_publish* published);
 
 public:
