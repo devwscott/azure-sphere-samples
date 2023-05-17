@@ -45,6 +45,7 @@ bool Coordinator::initialize(){
     Log_Debug("Coordinator::initialize\n");
 
     if(m_wifistation->init("TestAP") != true){
+    // if(m_wifistation->init("TestAP_LAB") != true){
         Log_Debug("[Coordinator::initialize] error m_wifistation->init()\n");
         return false;
     }
@@ -70,6 +71,7 @@ bool Coordinator::run(){
     if(m_wifistation->connect() != true){
         // for testing : storeAPInfo()
         m_wifistation->storeAPInfo("SK_WiFiGIGA4E04_5G", WifiStation::Security_Wpa2Psk, "KMR24@7966");
+        // m_wifistation->storeAPInfo("ZIGBANG", WifiStation::Security_Wpa2Psk, "wlrqkd0#");
     }
 
 
@@ -94,12 +96,16 @@ void Coordinator::onNetworkConnected(){
     // usleep(2000*1000);
     // m_wifistation->disConnect();
 
-    // m_mqttclient->connect(string("192.168.45.197"), string("1883"), NULL);
-
+#if defined(MQTT_USE_MBEDTLS)
+    if(m_mqttclient->connect(string("192.168.45.197"), string("8883"), "ca_cert.der") != true){
+        Log_Debug("[Coordinator::onNetworkConnected] error : m_mqttclient->connect() with CA Cert\n");
+    }
+#else 
     /* MQTT Connect without CA Cert */
     if(m_mqttclient->connect(string("192.168.45.197"), string("1883")) != true){
-        Log_Debug("[Coordinator::onNetworkConnected] error : m_mqttclient->connect()\n");
+        Log_Debug("[Coordinator::onNetworkConnected] error : m_mqttclient->connect() without CA Cert\n");
     }
+#endif 
 
     /* For Testing, publish MQTT */
     usleep(1000*1000);
@@ -109,7 +115,7 @@ void Coordinator::onNetworkConnected(){
     if(m_mqttclient->publish(test_topic, test_msg) != true){
         Log_Debug("[Coordinator::onNetworkConnected] error : m_mqttclient->publish()\n");
     }
- 
+    
     return;
 }
 
