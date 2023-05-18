@@ -52,8 +52,8 @@ bool Coordinator::initialize(){
 
     Log_Debug("AP NAME after is %s\n", m_wifistation->TEST_getAPName().c_str());
 
-    // QOS(0), keepAlive(400ms)
-    if(m_mqttclient->init(0, 400) != true){
+    // QOS(0), keepAlive(60 sec)
+    if(m_mqttclient->init(0, 60) != true){
         Log_Debug("[Coordinator::initialize] error : m_mqttclient->init()\n");
         return false;
     }
