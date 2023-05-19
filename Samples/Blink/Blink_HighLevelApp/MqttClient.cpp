@@ -98,9 +98,12 @@ bool MqttClient::connect(const string &broker, const string &port){
 
 
     m_running = true;
-#endif
-
+    
     return true;
+#else
+
+    return false;
+#endif
 }
 
 
@@ -113,7 +116,7 @@ bool MqttClient::connect(const string &broker, const string &port, const string 
     Log_Debug("MqttClient::connect() with CA Cert\n");
     Log_Debug("     broker:%s, port:%s, certFile:%s \n", broker.c_str(), port.c_str(), certFile.c_str());
 
-	if(_open_nb_socket(broker, port, certFile) != 0){
+	if(_open_socket(broker, port, certFile) != 0){
         Log_Debug("[MqttClient::connect] error : _open_nb_socket()\n");
 		return false;
     }
@@ -145,9 +148,13 @@ bool MqttClient::connect(const string &broker, const string &port, const string 
     subscribe(sub);
 
     m_running = true;
-
-#endif
+    
     return true;
+
+#else
+
+    return false;
+#endif
 }
 
 
@@ -265,7 +272,7 @@ void MqttClient::__subscribe_callback__(void **arg, struct mqtt_response_publish
 
 
 
-int MqttClient::_open_nb_socket(const string &addr, const string &port) {
+int MqttClient::_open_socket(const string &addr, const string &port) {
 	struct addrinfo hints = { 0 };
 
 	hints.ai_family = AF_INET;
@@ -312,7 +319,7 @@ int MqttClient::_open_nb_socket(const string &addr, const string &port) {
 
 
 //TODO: need to be checked!! moved into class as private member function?
-void failed(const char *fn, int rv) {
+void MqttClient::failed(const char *fn, int rv) {
     char buf[100];
     mbedtls_strerror(rv, buf, sizeof(buf));
     Log_Debug("%s failed with %x (%s)\n", fn, -rv, buf);
@@ -321,7 +328,7 @@ void failed(const char *fn, int rv) {
 
 
 //TODO: need to be checked!! moved into class as private member function?
-void cert_verify_failed(uint32_t rv) {
+void MqttClient::cert_verify_failed(uint32_t rv) {
     char buf[512];
     mbedtls_x509_crt_verify_info(buf, sizeof(buf), "\t", rv);
     Log_Debug("Certificate verification failed (%0" PRIx32 ")\n%s\n", rv, buf);
@@ -331,7 +338,7 @@ void cert_verify_failed(uint32_t rv) {
 
 //TODO: need to be checked!! moved into class as private static member function as pthread handler()??
 // this function located at m_mbedtls_ctx->entropy
-int _entropy_pluton_source(void* data, unsigned char* output,
+int MqttClient::_entropy_pluton_source(void* data, unsigned char* output,
 	size_t len, size_t* olen)
 {
 	ssize_t bytes_copied;
@@ -348,7 +355,7 @@ int _entropy_pluton_source(void* data, unsigned char* output,
 }
 
 
-int MqttClient::_open_nb_socket(const string &addr, const string &port, const string &cert) {
+int MqttClient::_open_socket(const string &addr, const string &port, const string &cert) {
     Log_Debug("MqttClient::_open_nb_socket() with CA Cert\n");
 
     int rv;
@@ -367,7 +374,7 @@ int MqttClient::_open_nb_socket(const string &addr, const string &port, const st
     mbedtls_ctr_drbg_init(ctr_drbg);
 
 #if 1
-	mbedtls_entropy_add_source(entropy, _entropy_pluton_source, NULL, MBEDTLS_ENTROPY_MAX_GATHER, MBEDTLS_ENTROPY_SOURCE_STRONG);
+	mbedtls_entropy_add_source(entropy, MqttClient::_entropy_pluton_source, NULL, MBEDTLS_ENTROPY_MAX_GATHER, MBEDTLS_ENTROPY_SOURCE_STRONG);
 
 	if ((ret = mbedtls_ctr_drbg_seed(ctr_drbg, mbedtls_entropy_func, entropy,
 		(const unsigned char*)pers,
