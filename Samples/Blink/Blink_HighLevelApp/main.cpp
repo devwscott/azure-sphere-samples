@@ -16,16 +16,24 @@ extern "C" void __cxa_pure_virtual() { while (1); }
 
 int main(int argc, char *argv[])
 {
-    // map<string, int> myMap;
+#if 0
+    map<string, int> myMap;
 
-    // myMap["Alice"] = 25;
-    // myMap["Bob"] = 31;
-    // myMap["Charlie"] = 45;
+    myMap["Alice"] = 25;
+    myMap["Bob"] = 31;
+    myMap["Charlie"] = 45;
 
-    // Log_Debug("--%d\n", myMap["Alice"]);
-    // Log_Debug("--%d\n", myMap["Bob"]);
-    // Log_Debug("--%d\n", myMap["Charlie"]);
-    
+    for(auto& pair:myMap){
+        Log_Debug("%s:%d\n", pair.first.c_str(), pair.second);
+    }
+
+    for (auto it = myMap.begin(); it != myMap.end(); ++it) {
+        Log_Debug("%s:%d\n", it->first.c_str(), it->second);
+    }
+    Log_Debug("--%d\n", myMap["Alice"]);
+    Log_Debug("--%d\n", myMap["Bob"]);
+    Log_Debug("--%d\n", myMap["Charlie"]);
+#endif 
 
     // Blink blink(TEMPLATE_LED);
     Blink *blink = new Blink(TEMPLATE_LED, "green");
