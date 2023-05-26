@@ -33,7 +33,29 @@ int main(int argc, char *argv[])
     Log_Debug("--%d\n", myMap["Alice"]);
     Log_Debug("--%d\n", myMap["Bob"]);
     Log_Debug("--%d\n", myMap["Charlie"]);
+
+    string test("hello_light");
+    Log_Debug("-------- %s\n", test.c_str());
+
+    if(test.find("hello") != string::npos){
+        Log_Debug(">> find hello :  %s\n", test.c_str());
+    }
+
+    if(test.find("light") != string::npos){
+        Log_Debug(">> find light :  %s\n", test.c_str());
+    }
+
+    if(test.find("curtain") != string::npos){
+        Log_Debug(">> find curtain :  %s\n", test.c_str());
+    }
+    else
+    {
+        Log_Debug(">> Error : find curtain :  %s\n", test.c_str());
+    }
+
 #endif 
+
+
 
     // Blink blink(TEMPLATE_LED);
     Blink *blink = new Blink(TEMPLATE_LED, "green");
