@@ -65,6 +65,7 @@ uClibcpp/valarray.cpp
 uClibcpp/vector.cpp
 ./thirdparty/MQTT-C/src/mqtt.c
 ./thirdparty/MQTT-C/src/mqtt_pal.c
+./thirdparty/jsonlib/src/parson.c
                 )
 
 
@@ -75,6 +76,7 @@ uClibcpp/vector.cpp
 include_directories(${PROJECT_NAME} PUBLIC
                     ./thirdparty/MQTT-C/include
                     ./thirdparty/mbedtls/include
+                    ./thirdparty/jsonlib/include
                     ./
                     )
 
