@@ -16,6 +16,9 @@ add_executable (${PROJECT_NAME} main.cpp Blink.cpp
 Coordinator.cpp
 WifiStation.cpp
 MqttClient.cpp
+MQTTMessage.cpp
+MQTTLightControlMessage.cpp
+MQTTLightStatusMessage.cpp
 uClibcpp/algorithm.cpp
 uClibcpp/associative_base.cpp
 uClibcpp/bitset.cpp
