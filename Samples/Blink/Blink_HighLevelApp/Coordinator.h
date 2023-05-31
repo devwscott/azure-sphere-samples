@@ -15,7 +15,8 @@ private:
     WifiStation *m_wifistation;
     MqttClient *m_mqttclient;
     // MQTTMessage *m_mqttmessage;
-    MQTTLightControlMessage *m_mqttmessage;
+    // MQTTLightControlMessage *m_mqttmessage;
+    MQTTMessage *m_mqttmessage;
     MQTTLightStatusMessage *m_mqttmessage1;
 
 public:

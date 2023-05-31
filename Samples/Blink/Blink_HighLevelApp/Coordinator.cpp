@@ -21,7 +21,10 @@ Coordinator::Coordinator(){
     payload["key2"] = "value2";
     payload["key3"] = "value3";
 
-    string jsonstr("{\"id\":1234,\"control\":\"on\"}");
+
+    // string jsonstr("{\"id\":1234,\"control\":\"on\"}");
+    //https://jsontostring.com/
+    string jsonstr("{\"type\":\"Light\",\"control\":\"on\",\"desired\":{\"id\":1234,\"state\":\"on\"}}");
 
     // m_mqttmessage = new MQTTMessage(topic, payload);
     // m_mqttmessage = new MQTTMessage(topic, jsonstr);
@@ -65,6 +68,8 @@ bool Coordinator::initialize(){
     topic = m_mqttmessage->getTopic();
     payload = m_mqttmessage->getPayload();
     jsonstr = m_mqttmessage->toJson();
+    // topic = ((MQTTLightControlMessage*)m_mqttmessage)->getType();
+    // topic = dynamic_cast<MQTTLightControlMessage*>(m_mqttmessage)->getType();
 
     Log_Debug("Get Topic : %s\n", topic.c_str());
 
