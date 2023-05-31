@@ -15,17 +15,31 @@
 Coordinator::Coordinator(){
     Log_Debug("Coordinator::Coordinator()\n");
 
-    m_wifistation = new WifiStation(this);
-    if(m_wifistation == NULL)
-    {
-        Log_Debug("new WifiSTation() error\n");
-    }
+    string topic("test_topic");
+    map<string, string> payload;
+    payload["key1"] = "value1";
+    payload["key2"] = "value2";
+    payload["key3"] = "value3";
 
-    m_mqttclient = new MqttClient(this);
-    if(m_mqttclient == NULL)
-    {
-        Log_Debug("new MqttClient() error\n");
-    }
+    string jsonstr("{\"id\":1234,\"control\":\"on\"}");
+
+    // m_mqttmessage = new MQTTMessage(topic, payload);
+    // m_mqttmessage = new MQTTMessage(topic, jsonstr);
+    m_mqttmessage = new MQTTLightControlMessage(topic, jsonstr);
+    m_mqttmessage1 = new MQTTLightStatusMessage(topic, payload);
+
+
+    // m_wifistation = new WifiStation(this);
+    // if(m_wifistation == NULL)
+    // {
+    //     Log_Debug("new WifiSTation() error\n");
+    // }
+
+    // m_mqttclient = new MqttClient(this);
+    // if(m_mqttclient == NULL)
+    // {
+    //     Log_Debug("new MqttClient() error\n");
+    // }
 
 }
 
@@ -44,6 +58,41 @@ bool Coordinator::initialize(){
 
     Log_Debug("Coordinator::initialize\n");
 
+    string topic;
+    map<string, string> payload;
+    string jsonstr;
+
+    topic = m_mqttmessage->getTopic();
+    payload = m_mqttmessage->getPayload();
+    jsonstr = m_mqttmessage->toJson();
+
+    Log_Debug("Get Topic : %s\n", topic.c_str());
+
+    for (auto it = payload.begin(); it != payload.end(); ++it) {
+        Log_Debug("[Payload] %s:%s\n", it->first.c_str(), it->second.c_str());
+    }
+
+    Log_Debug("Get json : %s\n", jsonstr.c_str());
+
+    Log_Debug("-------------MQTTLIGHT STATUS-----------------\n");
+
+    topic = m_mqttmessage1->getTopic();
+    payload = m_mqttmessage1->getPayload();
+    jsonstr = m_mqttmessage1->toJson();
+
+    Log_Debug("Get Topic : %s\n", topic.c_str());
+
+    for (auto it = payload.begin(); it != payload.end(); ++it) {
+        Log_Debug("[Payload] %s:%s\n", it->first.c_str(), it->second.c_str());
+    }
+
+    Log_Debug("Get json : %s\n", jsonstr.c_str());
+
+
+
+
+
+#if 0
     if(m_wifistation->init("TestAP") != true){
     // if(m_wifistation->init("TestAP_LAB") != true){
         Log_Debug("[Coordinator::initialize] error m_wifistation->init()\n");
@@ -57,7 +106,7 @@ bool Coordinator::initialize(){
         Log_Debug("[Coordinator::initialize] error : m_mqttclient->init()\n");
         return false;
     }
-    
+#endif 
 
     return ret;
 }

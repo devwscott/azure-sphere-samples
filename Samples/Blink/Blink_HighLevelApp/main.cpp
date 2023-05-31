@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     Coordinator *coordinator = new Coordinator();
 
     coordinator->initialize();
-    coordinator->run();
+    // coordinator->run();
 
     // delete coordinator;
 
