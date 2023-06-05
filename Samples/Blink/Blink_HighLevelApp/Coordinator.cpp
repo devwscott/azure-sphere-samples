@@ -17,10 +17,10 @@ Coordinator::Coordinator(){
 
     string topic("test_topic");
     map<string, string> payload;
+    
     payload["id"] = "1234";
     payload["state"] = "on";
     payload["key3"] = "value3";
-
 
     // string jsonstr("{\"id\":1234,\"control\":\"on\"}");
     //https://jsontostring.com/
@@ -28,9 +28,16 @@ Coordinator::Coordinator(){
 
     // m_mqttmessage = new MQTTMessage(topic, payload);
     // m_mqttmessage = new MQTTMessage(topic, jsonstr);
-    m_mqttmessage = new MQTTLightControlMessage(topic, jsonstr);
-    m_mqttmessage1 = new MQTTLightStatusMessage(topic, payload);
+    // m_mqttmessage = new MQTTLightControlMessage(topic, jsonstr);
+    // m_mqttmessage1 = new MQTTLightStatusMessage(topic, payload);
 
+    topic = "light_control";
+    m_LightCodec = new MQTTMessageLightCodec(topic);
+    m_mqttmessage = m_LightCodec->decode(jsonstr);
+
+    topic = "light_status";
+    m_LightCodec = new MQTTMessageLightCodec(topic);
+    m_mqttmessage1 = m_LightCodec->encode(payload);
 
     // m_wifistation = new WifiStation(this);
     // if(m_wifistation == NULL)
@@ -65,6 +72,8 @@ bool Coordinator::initialize(){
     map<string, string> payload;
     string jsonstr;
 
+
+    Log_Debug("-------------MQTTLIGHT CONTROL-----------------\n");
     topic = m_mqttmessage->getTopic();
     payload = m_mqttmessage->getPayload();
     jsonstr = m_mqttmessage->toJson();
