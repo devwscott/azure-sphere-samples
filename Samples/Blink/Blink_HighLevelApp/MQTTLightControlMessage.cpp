@@ -62,7 +62,8 @@ MQTTLightControlMessage::MQTTLightControlMessage(string& topic, string& jsonstr)
         }
     }
     
-    MQTTMessage::m_payload = payload;
+    // MQTTMessage::m_payload = payload;
+    m_payload = payload;
 }
 
 

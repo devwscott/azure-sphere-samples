@@ -51,8 +51,9 @@ MQTTLightStatusMessage::MQTTLightStatusMessage(string& topic, map<string,string>
     
     string jsonstr(serialized_str);
     
-    MQTTMessage::m_jsonstr = jsonstr;
-   
+    // MQTTMessage::m_jsonstr = jsonstr;
+    m_jsonstr = jsonstr;
+
     json_free_serialized_string(serialized_str);
     json_value_free(root);
 }
