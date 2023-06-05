@@ -17,8 +17,8 @@ Coordinator::Coordinator(){
 
     string topic("test_topic");
     map<string, string> payload;
-    payload["key1"] = "value1";
-    payload["key2"] = "value2";
+    payload["id"] = "1234";
+    payload["state"] = "on";
     payload["key3"] = "value3";
 
 
