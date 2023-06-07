@@ -20,6 +20,7 @@ MQTTMessage.cpp
 MQTTLightControlMessage.cpp
 MQTTLightStatusMessage.cpp
 MQTTMessageLightCodec.cpp
+MQTTMessageCodecFactoryImpl.cpp
 uClibcpp/algorithm.cpp
 uClibcpp/associative_base.cpp
 uClibcpp/bitset.cpp
