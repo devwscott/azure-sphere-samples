@@ -4,13 +4,8 @@
 #include <applibs/log.h>
 
 #include "MQTTMessageCodecFactoryImpl.h"
+#include "MQTTMessageLightCodec.h"
 
-// class MQTTMessageCodecFactoryImpl : public MQTTMessageCodecFactory{
-// public:
-//     MQTTMessageCodecFactoryImpl();
-//     virtual ~MQTTMessageCodecFactoryImpl();
-//     virtual MQTTMessageCodec* createCodec(string& topic) override;
-// };
 
 
 MQTTMessageCodecFactoryImpl::MQTTMessageCodecFactoryImpl(){
@@ -27,6 +22,17 @@ MQTTMessageCodecFactoryImpl::~MQTTMessageCodecFactoryImpl(){
 MQTTMessageCodec* MQTTMessageCodecFactoryImpl::createCodec(string& topic){
     Log_Debug("MQTTMessageCodecFactoryImpl::createCodec()\n");
 
+    Log_Debug("[MQTTMessageCodecFactoryImpl::createCodec] topic is %s\n", topic.c_str());
+
+    if(topic.find("light") != string::npos){
+        return new MQTTMessageLightCodec(topic);
+    }
+    else if(topic.find("xxx") != string::npos){
+        // return new MQTTMessageXXXCodec(topic);
+    }
+
+    return NULL;
+    
 }
 
 
