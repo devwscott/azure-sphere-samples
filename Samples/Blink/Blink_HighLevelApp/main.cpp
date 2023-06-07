@@ -66,6 +66,18 @@ int main(int argc, char *argv[])
     coordinator->initialize();
     // coordinator->run();
 
+    string topic("light_control");
+    string jsonstr("{\"type\":\"Light\",\"control\":\"on\",\"desired\":{\"id\":1234,\"state\":\"on\"}}");
+    coordinator->_processMessage(topic, jsonstr);
+
+    topic = "light_status";
+    map<string, string> payload;
+    payload["id"] = "1234";
+    payload["state"] = "on";
+    payload["key3"] = "value3";
+    coordinator->_generateMessage(topic, payload);
+
+
     // delete coordinator;
 
     Log_Debug("Blink CPP Example start!!\n");
