@@ -11,6 +11,7 @@
 #include "WifiStation.h"
 #include "Coordinator.h"
 
+#include "MQTTMessageCodecFactoryImpl.h"
 
 Coordinator::Coordinator(){
     Log_Debug("Coordinator::Coordinator()\n");
@@ -31,13 +32,22 @@ Coordinator::Coordinator(){
     // m_mqttmessage = new MQTTLightControlMessage(topic, jsonstr);
     // m_mqttmessage1 = new MQTTLightStatusMessage(topic, payload);
 
-    topic = "light_control";
-    m_LightCodec = new MQTTMessageLightCodec(topic);
-    m_mqttmessage = m_LightCodec->decode(jsonstr);
+    // topic = "light_control";
+    // m_LightCodec = new MQTTMessageLightCodec(topic);
+    // m_mqttmessage = m_LightCodec->decode(jsonstr);
 
-    topic = "light_status";
-    m_LightCodec = new MQTTMessageLightCodec(topic);
-    m_mqttmessage1 = m_LightCodec->encode(payload);
+    // topic = "light_status";
+    // m_LightCodec = new MQTTMessageLightCodec(topic);
+    // m_mqttmessage1 = m_LightCodec->encode(payload);
+
+    m_factory = new MQTTMessageCodecFactoryImpl();
+    string topic_factory("light_control");
+    m_mqttcodec = m_factory->createCodec(topic_factory);
+    m_mqttmessage = m_mqttcodec->decode(jsonstr);
+    
+    topic_factory = "light_status";
+    m_mqttcodec = m_factory->createCodec(topic_factory);
+    m_mqttmessage1 = m_mqttcodec->encode(payload);
 
     // m_wifistation = new WifiStation(this);
     // if(m_wifistation == NULL)

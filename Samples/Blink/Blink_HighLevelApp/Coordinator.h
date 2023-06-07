@@ -8,6 +8,7 @@
 #include "MQTTLightStatusMessage.h"
 
 #include "MQTTMessageLightCodec.h"
+#include "MQTTMessageCodecFactory.h"
 
 using namespace std;
 
@@ -22,6 +23,8 @@ private:
     // MQTTLightStatusMessage *m_mqttmessage1;
     
     MQTTMessageLightCodec *m_LightCodec;
+    MQTTMessageCodecFactory *m_factory;
+    MQTTMessageCodec* m_mqttcodec;
 
 public:
     Coordinator();
