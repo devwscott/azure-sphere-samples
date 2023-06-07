@@ -3,11 +3,7 @@
 
 #include "WifiStation.h" 
 #include "MqttClient.h" 
-#include "MQTTMessage.h"
-#include "MQTTLightControlMessage.h"
-#include "MQTTLightStatusMessage.h"
 
-#include "MQTTMessageLightCodec.h"
 #include "MQTTMessageCodecFactory.h"
 
 using namespace std;
@@ -17,14 +13,8 @@ class Coordinator : public IWifiStationListener, public IMqttClientListener{
 private:
     WifiStation *m_wifistation;
     MqttClient *m_mqttclient;
-    MQTTMessage *m_mqttmessage;
-    MQTTMessage *m_mqttmessage1;
-    // MQTTLightControlMessage *m_mqttmessage;
-    // MQTTLightStatusMessage *m_mqttmessage1;
-    
-    MQTTMessageLightCodec *m_LightCodec;
-    MQTTMessageCodecFactory *m_factory;
-    MQTTMessageCodec* m_mqttcodec;
+    MQTTMessageCodecFactory *m_mqttfactory;
+
 
 public:
     Coordinator();
@@ -32,6 +22,10 @@ public:
 
     bool initialize();
     bool run();
+
+    //TODO: need to be moved into private??
+    bool _processMessage(string& topic, string& message);
+    bool _generateMessage(string& topic, map<string, string>& payload);
 
     virtual void onNetworkConnected() override;
     virtual void onNetworkDisconnected() override;

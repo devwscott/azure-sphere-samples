@@ -16,39 +16,6 @@
 Coordinator::Coordinator(){
     Log_Debug("Coordinator::Coordinator()\n");
 
-    string topic("test_topic");
-    map<string, string> payload;
-    
-    payload["id"] = "1234";
-    payload["state"] = "on";
-    payload["key3"] = "value3";
-
-    // string jsonstr("{\"id\":1234,\"control\":\"on\"}");
-    //https://jsontostring.com/
-    string jsonstr("{\"type\":\"Light\",\"control\":\"on\",\"desired\":{\"id\":1234,\"state\":\"on\"}}");
-
-    // m_mqttmessage = new MQTTMessage(topic, payload);
-    // m_mqttmessage = new MQTTMessage(topic, jsonstr);
-    // m_mqttmessage = new MQTTLightControlMessage(topic, jsonstr);
-    // m_mqttmessage1 = new MQTTLightStatusMessage(topic, payload);
-
-    // topic = "light_control";
-    // m_LightCodec = new MQTTMessageLightCodec(topic);
-    // m_mqttmessage = m_LightCodec->decode(jsonstr);
-
-    // topic = "light_status";
-    // m_LightCodec = new MQTTMessageLightCodec(topic);
-    // m_mqttmessage1 = m_LightCodec->encode(payload);
-
-    m_factory = new MQTTMessageCodecFactoryImpl();
-    string topic_factory("light_control");
-    m_mqttcodec = m_factory->createCodec(topic_factory);
-    m_mqttmessage = m_mqttcodec->decode(jsonstr);
-    
-    topic_factory = "light_status";
-    m_mqttcodec = m_factory->createCodec(topic_factory);
-    m_mqttmessage1 = m_mqttcodec->encode(payload);
-
     // m_wifistation = new WifiStation(this);
     // if(m_wifistation == NULL)
     // {
@@ -60,6 +27,11 @@ Coordinator::Coordinator(){
     // {
     //     Log_Debug("new MqttClient() error\n");
     // }
+
+    m_mqttfactory = new MQTTMessageCodecFactoryImpl();
+    if(m_mqttfactory == NULL){
+        Log_Debug("new MQTTMessageCodecFactoryImpl() error\n");
+    }
 
 }
 
@@ -77,44 +49,6 @@ bool Coordinator::initialize(){
     bool ret = true;
 
     Log_Debug("Coordinator::initialize\n");
-
-    string topic;
-    map<string, string> payload;
-    string jsonstr;
-
-
-    Log_Debug("-------------MQTTLIGHT CONTROL-----------------\n");
-    topic = m_mqttmessage->getTopic();
-    payload = m_mqttmessage->getPayload();
-    jsonstr = m_mqttmessage->toJson();
-    // topic = ((MQTTLightControlMessage*)m_mqttmessage)->getType();
-    // topic = dynamic_cast<MQTTLightControlMessage*>(m_mqttmessage)->getType();
-
-    Log_Debug("Get Topic : %s\n", topic.c_str());
-
-    for (auto it = payload.begin(); it != payload.end(); ++it) {
-        Log_Debug("[Payload] %s:%s\n", it->first.c_str(), it->second.c_str());
-    }
-
-    Log_Debug("Get json : %s\n", jsonstr.c_str());
-
-    Log_Debug("-------------MQTTLIGHT STATUS-----------------\n");
-
-    topic = m_mqttmessage1->getTopic();
-    payload = m_mqttmessage1->getPayload();
-    jsonstr = m_mqttmessage1->toJson();
-
-    Log_Debug("Get Topic : %s\n", topic.c_str());
-
-    for (auto it = payload.begin(); it != payload.end(); ++it) {
-        Log_Debug("[Payload] %s:%s\n", it->first.c_str(), it->second.c_str());
-    }
-
-    Log_Debug("Get json : %s\n", jsonstr.c_str());
-
-
-
-
 
 #if 0
     if(m_wifistation->init("TestAP") != true){
@@ -227,3 +161,84 @@ void Coordinator::onReceiveTopic(string &topic, string &msg){
 }
 
 
+bool Coordinator::_processMessage(string& topic, string &message){
+    Log_Debug("Coordinator::_processMessage\n");
+
+    MQTTMessageCodec *mqttcodec;
+    MQTTMessage *mqttmessage;
+
+    string topic_;
+    map<string, string> payload_;
+    string jsonstr_;
+
+    mqttcodec = m_mqttfactory->createCodec(topic);
+    if(mqttcodec != NULL){
+        mqttmessage = mqttcodec->decode(message);
+        if(mqttmessage != NULL){
+            topic_ = mqttmessage->getTopic();
+            payload_ = mqttmessage->getPayload();
+            jsonstr_ = mqttmessage->toJson();
+            
+            Log_Debug("Get Topic : %s\n", topic_.c_str());
+
+            for (auto it = payload_.begin(); it != payload_.end(); ++it) {
+                Log_Debug("[Payload] %s:%s\n", it->first.c_str(), it->second.c_str());
+            }
+
+            Log_Debug("Get json : %s\n", jsonstr_.c_str());
+        }
+        else{
+            delete mqttcodec;
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
+
+    delete mqttmessage;
+    delete mqttcodec;
+
+    return true;
+}
+
+
+bool Coordinator::_generateMessage(string& topic, map<string,string>& payload){
+    Log_Debug("Coordinator::_generateMessage()\n");
+
+    MQTTMessageCodec *mqttcodec;
+    MQTTMessage* mqttmessage;
+
+    string topic_;
+    map<string,string> payload_;
+    string jsonstr_;
+
+    mqttcodec = m_mqttfactory->createCodec(topic);
+    if(mqttcodec != NULL){
+        mqttmessage = mqttcodec->encode(payload);
+        if(mqttmessage != NULL){
+            topic_ = mqttmessage->getTopic();
+            payload_ = mqttmessage->getPayload();
+            jsonstr_ = mqttmessage->toJson();
+            
+            Log_Debug("Get Topic : %s\n", topic_.c_str());
+
+            for (auto it = payload_.begin(); it != payload_.end(); ++it) {
+                Log_Debug("[Payload] %s:%s\n", it->first.c_str(), it->second.c_str());
+            }
+
+            Log_Debug("Get json : %s\n", jsonstr_.c_str());
+        }
+        else{
+            delete mqttcodec;
+            return false;
+        }
+    }
+    else{
+        return false;
+    }
+
+    delete mqttmessage;
+    delete mqttcodec;
+    return false;
+}
