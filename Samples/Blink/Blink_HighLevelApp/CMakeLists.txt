@@ -13,61 +13,14 @@ azsphere_configure_api(TARGET_API_SET "15")
 # add_executable (${PROJECT_NAME} main.c)
 # add_executable (${PROJECT_NAME} main.cpp Blink.cpp)
 add_executable (${PROJECT_NAME} main.cpp Blink.cpp
-Coordinator.cpp
-WifiStation.cpp
-MqttClient.cpp
-# MQTTMessage.cpp
-# MQTTLightControlMessage.cpp
-# MQTTLightStatusMessage.cpp
-# MQTTMessageLightCodec.cpp
-# MQTTMessageCodecFactoryImpl.cpp
-uClibcpp/algorithm.cpp
-uClibcpp/associative_base.cpp
-uClibcpp/bitset.cpp
-uClibcpp/char_traits.cpp
-uClibcpp/complex.cpp
-uClibcpp/del_op.cpp
-uClibcpp/del_opnt.cpp
-uClibcpp/del_ops.cpp
-uClibcpp/del_opv.cpp
-uClibcpp/del_opvnt.cpp
-uClibcpp/del_opvs.cpp
-uClibcpp/deque.cpp
-uClibcpp/eh_alloc.cpp
-uClibcpp/eh_globals.cpp
-uClibcpp/exception.cpp
-uClibcpp/func_exception.cpp
-uClibcpp/iomanip.cpp
-uClibcpp/ios.cpp
-uClibcpp/iostream.cpp
-uClibcpp/istream.cpp
-uClibcpp/iterator.cpp
-uClibcpp/limits.cpp
-uClibcpp/list.cpp
-uClibcpp/locale.cpp
-uClibcpp/map.cpp
-uClibcpp/new_handler.cpp
-uClibcpp/new_op.cpp
-uClibcpp/new_opnt.cpp
-uClibcpp/new_opv.cpp
-uClibcpp/new_opvnt.cpp
-uClibcpp/numeric.cpp
-uClibcpp/ostream.cpp
-uClibcpp/queue.cpp
-uClibcpp/set.cpp
-uClibcpp/sstream.cpp
-uClibcpp/stack.cpp
-uClibcpp/stdexcept.cpp
-uClibcpp/streambuf.cpp
-uClibcpp/string.cpp
-uClibcpp/support.cpp
-uClibcpp/typeinfo.cpp
-uClibcpp/utility.cpp
-uClibcpp/valarray.cpp
-uClibcpp/vector.cpp
-./thirdparty/MQTT-C/src/mqtt.c
-./thirdparty/MQTT-C/src/mqtt_pal.c
-./thirdparty/jsonlib/src/parson.c
+                Coordinator.cpp
+                WifiStation.cpp
+                MqttClient.cpp
+
+                ./thirdparty/MQTT-C/src/mqtt.c
+                ./thirdparty/MQTT-C/src/mqtt_pal.c
+                ./thirdparty/jsonlib/src/parson.c
+
                 )
 
 
@@ -96,12 +49,14 @@ add_compile_definitions(MBEDTLS_CONFIG_FILE="mbedtls_user_config.h")
 set(ENABLE_PROGRAMS OFF CACHE BOOL "Disabled for ENABLE_PROGRAMS" FORCE)
 set(ENABLE_TESTING OFF CACHE BOOL "Disabled for ENABLE_TESTING" FORCE)
 
+add_subdirectory (uClibcpp)
+
 add_subdirectory (thirdparty/mbedtls)
 add_subdirectory (modules/MqttMessage)
 
 
 # target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c)
-target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c mbedtls mbedcrypto mbedx509 mqttmessage)
+target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c mbedtls mbedcrypto mbedx509 mqttmessage uClibcpp)
 
 # azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/mt3620_rdb" TARGET_DEFINITION "template_appliance.json")
 azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/avnet_mt3620_sk" TARGET_DEFINITION "template_appliance.json")
