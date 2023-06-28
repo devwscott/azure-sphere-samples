@@ -16,11 +16,11 @@ add_executable (${PROJECT_NAME} main.cpp Blink.cpp
 Coordinator.cpp
 WifiStation.cpp
 MqttClient.cpp
-MQTTMessage.cpp
-MQTTLightControlMessage.cpp
-MQTTLightStatusMessage.cpp
-MQTTMessageLightCodec.cpp
-MQTTMessageCodecFactoryImpl.cpp
+# MQTTMessage.cpp
+# MQTTLightControlMessage.cpp
+# MQTTLightStatusMessage.cpp
+# MQTTMessageLightCodec.cpp
+# MQTTMessageCodecFactoryImpl.cpp
 uClibcpp/algorithm.cpp
 uClibcpp/associative_base.cpp
 uClibcpp/bitset.cpp
@@ -80,6 +80,7 @@ include_directories(${PROJECT_NAME} PUBLIC
                     ./thirdparty/mbedtls/include
                     ./thirdparty/jsonlib/include
                     ./
+                    ./modules/MqttMessage/include
                     )
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-rtti")
@@ -96,10 +97,11 @@ set(ENABLE_PROGRAMS OFF CACHE BOOL "Disabled for ENABLE_PROGRAMS" FORCE)
 set(ENABLE_TESTING OFF CACHE BOOL "Disabled for ENABLE_TESTING" FORCE)
 
 add_subdirectory (thirdparty/mbedtls)
+add_subdirectory (modules/MqttMessage)
 
 
 # target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c)
-target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c mbedtls mbedcrypto mbedx509)
+target_link_libraries (${PROJECT_NAME} applibs pthread gcc_s c mbedtls mbedcrypto mbedx509 mqttmessage)
 
 # azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/mt3620_rdb" TARGET_DEFINITION "template_appliance.json")
 azsphere_target_hardware_definition(${PROJECT_NAME} TARGET_DIRECTORY "HardwareDefinitions/avnet_mt3620_sk" TARGET_DEFINITION "template_appliance.json")
