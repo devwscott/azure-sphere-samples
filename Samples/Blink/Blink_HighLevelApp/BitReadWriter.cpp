@@ -130,6 +130,8 @@ unsigned long BitReadWriter::calculate_crc32(unsigned char* temp, int nRd){
 
 
 /* TEST Codes which shoule be located in main.cpp
+    
+    #include "BitReadWriter.h"
 
     unsigned char buff_data[] = {0x47, 0x01, 0xb0, 0x0c, 0x52, 0x54, 0xd5, 0xff, 0xff, 0x00, 0x01, 0x1f, 0x12, 0x34, 0x56, 0x78};
     int value;
