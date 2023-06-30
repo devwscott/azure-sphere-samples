@@ -17,6 +17,8 @@ add_executable (${PROJECT_NAME} main.cpp Blink.cpp
                 WifiStation.cpp
                 MqttClient.cpp
                 BitReadWriter.cpp
+                descriptor.cpp
+                unknown_descriptor.cpp
 
                 ./thirdparty/MQTT-C/src/mqtt.c
                 ./thirdparty/MQTT-C/src/mqtt_pal.c
