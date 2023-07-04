@@ -20,6 +20,7 @@ add_executable (${PROJECT_NAME} main.cpp Blink.cpp
                 descriptor.cpp
                 unknown_descriptor.cpp
                 light_control_descriptor.cpp
+                light_status_descriptor.cpp
 
                 ./thirdparty/MQTT-C/src/mqtt.c
                 ./thirdparty/MQTT-C/src/mqtt_pal.c
