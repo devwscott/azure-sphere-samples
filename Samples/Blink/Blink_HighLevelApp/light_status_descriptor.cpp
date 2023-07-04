@@ -61,7 +61,8 @@ void LightStatusDescriptor::WriteDescriptor(BitReadWriter* rw){
 
     for(int i=0; i<m_deviceCount; i++){
         rw->Write_On_Buffer(m_deviceId[i], 4);
-        rw->Skip_On_Buffer(3);
+        // rw->Skip_On_Buffer(3);
+        rw->Write_On_Buffer(0xFF, 3);
         rw->Write_On_Buffer(m_deviceStatus[i], 1);
     }
 }
@@ -139,15 +140,18 @@ void LightStatusDescriptor::updateDescriptorLength(){
 
     bitRW->Skip_On_Buffer(17);
 
-    // LightStatusDescriptor* desc = new LightStatusDescriptor(bitRW);
+#if 1 // decoding
+    LightStatusDescriptor* desc = new LightStatusDescriptor(bitRW);
+#else //encoding
     LightStatusDescriptor* desc = new LightStatusDescriptor();
 
-    desc->SetDeviceStatus(3, 0);
+    desc->SetDeviceStatus(3, 1);
 
     value = desc->GetDescriptorLength();
     Log_Debug("desc.length : 0x%x\n", value);
 
     desc->WriteDescriptor(bitRW);
+#endif
 
     desc->PrintDescriptor();
 
