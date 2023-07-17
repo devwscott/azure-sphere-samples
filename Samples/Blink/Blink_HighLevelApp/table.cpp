@@ -79,7 +79,7 @@ void Table::EncodeTable(){
 
     __encode_prepare_buffer__();
     __encode_write_table_header__();
-    __encode_write_table_body();
+    __encode_write_table_body__();
     __encode_make_crc__();
 }
 
@@ -136,6 +136,9 @@ void Table::__encode_make_crc__(){
 
     // TODO: created the calc_CRC32() function
     // CRC_32 = calc_CRC32(crc_buf, section_length-4);
+    // for testing
+    CRC_32 = 0x12345678;
+
 
     Write_On_Buffer(CRC_32, 32);
 }

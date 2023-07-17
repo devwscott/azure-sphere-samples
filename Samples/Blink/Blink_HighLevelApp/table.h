@@ -38,7 +38,7 @@ protected:
 
     virtual void __encode_update_table_length__(){};
     virtual void __encode_prepare_table__(){};
-    virtual void __encode_write_table_body(){};
+    virtual void __encode_write_table_body__(){};
 
 
 private:
