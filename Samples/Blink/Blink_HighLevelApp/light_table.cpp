@@ -76,6 +76,7 @@ void LightTable::SetCoreId(int id){
 }
 
 
+
 void LightTable::SetDescriptor(Descriptor* desc){
     Log_Debug("LightTable::SetDescriptor()\n");
 
@@ -130,3 +131,54 @@ void LightTable::__encode_write_table_body__(){
 }
 
 
+/* Test codes for Light control encoding/decoding
+
+#include "light_table.h"
+
+    // Light control
+    unsigned char buff_data[] = {0x47, 0x01, 0xb0, 0x0c, 0x52, 0x54, 0xd5, 0xff, 0xff, 0x00, 0x01, 0x1f, 0x12, 0x34, 0x56, 0x78};
+    // Light Status
+    // unsigned char buff_data[] = {0x47, 0x01, 0xb0, 0x0c, 0x52, 0x54, 0xd5, 0xff, 0xff, 0x01, 0x01, 0x3f, 0x12, 0x34, 0x56, 0x78};
+
+    int value;
+
+    unsigned char* buff;
+    buff = new unsigned char[20];
+    
+    memcpy(buff, buff_data, sizeof(buff_data));
+
+#if 0 //encoding
+    LightTable* table = new LightTable();
+    table->SetVersionNumber(10);
+    table->SetCoreId(0x5254);
+
+    Descriptor* desc = DescriptorFactory::CreateDescriptor(DescriptorFactory::LIGHT_CONTROL_DESCRIPTOR);
+    table->SetDescriptor(desc);
+
+    ((LightControlDescriptor*)desc)->SetDeviceStatus(1,1);
+    desc->GetDescriptorLength();
+
+    // table->SetDescriptor(DescriptorFactory::LIGHT_CONTROL_DESCRIPTOR);
+    table->EncodeTable();
+    table->PrintTable();
+
+#else //decoding
+    LightTable* table = new LightTable(buff, sizeof(buff_data));
+
+    table->PrintTable();
+    value = table->GetVersionNumber();
+    Log_Debug("GetVersionNumber : %d\n", value);
+
+    value = table->GetCoreId();
+    Log_Debug("GetCoreId = 0x%x\n", value);
+
+    value = table->GetSectionLength();
+    Log_Debug("GetSectionLength : %d\n", value);
+#endif
+
+    unsigned char* buff2;
+    buff2 = table->GetSection();
+    for(int i=0; i<16; i++){
+        Log_Debug("[%d] 0x%02x\n", i, buff2[i]);
+    }
+*/
