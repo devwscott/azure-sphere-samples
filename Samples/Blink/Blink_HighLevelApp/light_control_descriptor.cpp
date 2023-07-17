@@ -61,7 +61,8 @@ void LightControlDescriptor::WriteDescriptor(BitReadWriter* rw){
 
     for(int i=0; i<m_deviceCount; i++){
         rw->Write_On_Buffer(m_deviceId[i], 4);
-        rw->Skip_On_Buffer(3);
+        // rw->Skip_On_Buffer(3);
+        rw->Write_On_Buffer(0xFF, 3);
         rw->Write_On_Buffer(m_deviceStatus[i], 1);
     }
 }
