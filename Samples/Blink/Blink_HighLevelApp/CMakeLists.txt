@@ -25,6 +25,7 @@ add_executable (${PROJECT_NAME} main.cpp Blink.cpp
                 table.cpp
                 unknown_table.cpp
                 light_table.cpp
+                system_table.cpp
 
                 ./thirdparty/MQTT-C/src/mqtt.c
                 ./thirdparty/MQTT-C/src/mqtt_pal.c
