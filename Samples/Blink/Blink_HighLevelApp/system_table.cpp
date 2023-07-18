@@ -132,5 +132,57 @@ void SystemTable::SetDescriptor(Descriptor* desc){
 }
 
 
+/* Test codes for SystemTable encoding/decoding
 
+#include "system_table.h"
+
+    // System Table with Light Control desc?
+    unsigned char buff_data[] = {0x47, 0x00, 0xb0, 0x0c, 0x52, 0x54, 0xd5, 0xff, 0xff, 0x00, 0x01, 0x1f, 0x12, 0x34, 0x56, 0x78};
+
+    int value;
+    unsigned char* buff;
+    buff = new unsigned char[20];
+    
+    memcpy(buff, buff_data, sizeof(buff_data));
+
+#if 0 //encoding
+    SystemTable* table = new SystemTable();
+    table->SetVersionNumber(10);
+    table->SetCoreId(0x5254);
+
+    Descriptor* desc = DescriptorFactory::CreateDescriptor(DescriptorFactory::LIGHT_CONTROL_DESCRIPTOR);
+    table->SetDescriptor(desc);
+
+    ((LightControlDescriptor*)desc)->SetDeviceStatus(1,1);
+    ((LightControlDescriptor*)desc)->SetDeviceStatus(2,1);
+    desc->GetDescriptorLength();
+
+    table->EncodeTable();
+    table->PrintTable();
+
+#else //decoding
+    SystemTable* table = new SystemTable(buff, sizeof(buff_data));
+
+    table->PrintTable();
+    value = table->GetVersionNumber();
+    Log_Debug("GetVersionNumber : %d\n", value);
+
+    value = table->GetCoreId();
+    Log_Debug("GetCoreId = 0x%x\n", value);
+
+    value = table->GetSectionLength();
+    Log_Debug("GetSectionLength : %d\n", value);
+#endif
+
+    unsigned char* buff2;
+    int length;
+   
+    buff2 = table->GetSection();
+    length = table->GetSectionLength();
+    
+    for(int i=0; i<length; i++){
+        Log_Debug("[%d] 0x%02x\n", i, buff2[i]);
+    }
+
+*/
 
